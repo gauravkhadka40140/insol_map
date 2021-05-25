@@ -1,4 +1,4 @@
-# Inso Map
+# Insol Map
 
 Map project based on Openlayer and Openroute Services
 ## Usage
