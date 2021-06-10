@@ -3,41 +3,47 @@
 <head>
     <title>Map</title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Font awesome icon ko lagi -->
     <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Open layer ko css -->
     <link rel="stylesheet" href="http://openlayers.org/en/latest/css/ol.css" type="text/css">
+    <!-- Jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- sabai css -->
     <link rel="stylesheet" href="map.css" type="text/css">
+    <link rel="stylesheet" href="float_search.css" type="text/css">
+    <link rel="stylesheet" href="ol_popup.css" type="text/css">
+
 </head>
 
 <body>
+    <!-- Search bar on right -->
     <div class="event__search__floater">
         <div class="search__anchor">
-
             <input id="inputtext" list="search_list" type="text" class="search__bar" placeholder="Search Location">
-
             <div class="search__toggler"></div>
-
             <datalist id="search_list"></datalist>
-
         </div>
     </div>
 
+    <!-- Sidebar on left -->
     <div id="sidebar" class="sidebar collapsed">
-
-
-        <!-- Nav tabs -->
+        <!-- Sidebar ko tabs -->
         <div class="sidebar-tabs">
+            <!-- Main 3 ta menu -->
             <ul role="tablist">
                 <li><a href="#layer_switcher" role="tab"><i class="fa fa-bars center_icon"></i></a></li>
                 <li><a href="#map_tools" role="tab"><i class="fa fa-briefcase center_icon" aria-hidden="true"></i></a></li>
                 <li><a href="#tools" role="tab"><i class="fa fa-dot-circle-o center_icon" aria-hidden="true"></i></a></li>
-
             </ul>
+
+            <!-- buttom ko euta menu -->
             <ul role="tablist">
                 <li><a role="tab" id="clear_vector_layer"><i class="fa fa-eraser center_icon" aria-hidden="true"></i></a></li>
             </ul>
+
         </div>
+        <!-- Sidebar ko tab ends -->
 
         <!-- Tab panes -->
         <div class="sidebar-content">
@@ -63,32 +69,42 @@
                 <!-- Button to get direction -->
                 <button class="button" id="get_direction">Get direction</button>
                 </br>
-                <label>Input Range: </label><input id="range_input" list="range_list" type="text" class="input m-5" placeholder="Input range">
+
+                <!-- Input range for isochrones -->
+                <label>Input time (sec) : </label>
+                <input id="isochrone_range" type="number" class="input" placeholder="Input Range">
+
                 <!-- Button to get isochrones -->
                 <button class="button" id="get_isochrones">Isochrone</button>
+
                 <!--For Salesman Problem-->
                 <button class="button" id="get_optimization">Optimization</button>
 
             </div>
         </div>
+
     </div>
 
-
+    <!-- Map ko div -->
     <div id="map" class="sidebar-map"></div>
-    <!-- popup -->
+
+    <!-- Popup -->
     <div id="popup" class="ol-popup">
         <a href="#" id="popup-closer" class="ol-popup-closer"></a>
         <div id="popup-content"></div>
     </div>
 
+    <!-- Required js  -->
     <script src="//openlayers.org/en/latest/build/ol.js" type="text/javascript"></script>
 
+    <!-- Internet copied for libraries -->
     <link rel="stylesheet" href="//turbo87.github.io/sidebar-v2/css/ol3-sidebar.css" />
-    <script src="//turbo87.github.io/sidebar-v2/js/ol3-sidebar.js"></script>
-
-    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
     <link rel="stylesheet" href="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.css" />
+    <script src="//turbo87.github.io/sidebar-v2/js/ol3-sidebar.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
     <script src="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.js"></script>
+    <!-- Internet copied for libraries end-->
+
     <script src="map.js"></script>
 
 </body>

@@ -187,52 +187,55 @@ function draw_snap_marker() {
 //         }
 //     }
 // });
-const get_isochrones = document.getElementById("get_isochrones");
-get_isochrones.addEventListener("click", function(e) {
-    map.removeLayer(vectorLayer);
 
+// isochrone ko logic
+$('#get_isochrones').click( function() {
+    
+    // Range ko value lios
+    let isochrone_range=$('#isochrone_range').val();
+    
+    // Khali cha ki chaina check garyo
+    if(isochrone_range==''){
+        alert('Enter isochrone range');
+    }
+    // Khali chaina bhaneys
+    else{
+        // bhaeko layer sabai hatayo
+        map.removeLayer(vectorLayer);
+        get_isochrones.disabled = true;
+        draw_snap_marker();
+        let isochrones_api_url = "https://api.openrouteservice.org/v2/isochrones/driving-car", click = 0;
 
-    get_isochrones.disabled = true;
-    close_sidebar.click();
-    draw_snap_marker();
-    let isochrones_api_url = "https://api.openrouteservice.org/v2/isochrones/driving-car",
-        click = 0;
-    map.on("click", isochrone_function = function(e) {
+        //Map ma click bhayepachi agrney kaam
+        map.on("click", isochrone_function = function(e) {
+            click++;
+            let request = new XMLHttpRequest();
+            request.open('POST', isochrones_api_url);
+            request.setRequestHeader('Accept', 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8');
+            request.setRequestHeader('Content-Type', 'application/json');
+            request.setRequestHeader('Authorization', API_KEY);
+            
+            request.onreadystatechange = function() {
+                if (this.readyState === 4) {
+                    let isochrone_features = new ol.format.GeoJSON().readFeatures(this.responseText);
+                    vectorSource.addFeatures(isochrone_features);
+                }
+            };
 
-        click++;
-        let request = new XMLHttpRequest();
-
-        request.open('POST', isochrones_api_url);
-
-        request.setRequestHeader('Accept', 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8');
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader('Authorization', API_KEY);
-
-        request.onreadystatechange = function() {
-            if (this.readyState === 4) {
-                let isochrone_features = new ol.format.GeoJSON().readFeatures(this.responseText);
-                vectorSource.addFeatures(isochrone_features);
-
-            }
-        };
-
-        let long = e.coordinate[0];
-        let lat = e.coordinate[1];
-        const body = '{"locations":[[' + long + ',' + lat + ']],"range":[100,150,200]}';
-
-        request.send(body);
-
-
-
-        if (click > 0) {
+            let long = e.coordinate[0];
+            let lat = e.coordinate[1];
+            const body = '{"locations":[[' + long + ',' + lat + ']],"range":['+isochrone_range+']}';
+            request.send(body);
+            if (click > 0) {
             map.un("click", isochrone_function);
             map.removeInteraction(draw);
             get_isochrones.disabled = false;
-
         }
-    })
+        });
+    }
+});
 
-})
+
 
 
 var container = document.getElementById('popup');
@@ -290,8 +293,9 @@ searchInput.addEventListener("input", function() {
             let option_tag = new Array();
             let parsed_json = JSON.parse(geojson);
             console.log(parsed_json.features);
+            console.log(parsed_json.features.item);
             parsed_json.features.forEach((item, index) =>
-                option_tag[index] = '<option data-id="' + index + '" value="' + item.properties.name + ',' + item.properties.country + '' + item.properties.street + '">' + item.properties.name + ',' + item.properties.country + ',' + item.properties.street + '</option>');
+                option_tag[index] = '<option data-id="' + index + '" value="' + item.properties.name + ', ' + item.properties.county + ', ' + item.properties.country + '"></option>');
             search_list.innerHTML = option_tag;
 
             searchInput.addEventListener("change", function(event) {
@@ -334,7 +338,8 @@ from_input.addEventListener("input", function() {
             let option_tag = new Array();
             let parsed_json = (JSON.parse(api_response));
             parsed_json.features.forEach((item, index) => {
-                option_tag[index] = '<option value="' + item.properties.name + ',' + item.properties.country + '">' + item.properties.name + ',' + item.properties.country + '</option>';
+                let countyValue=(typeof item.properties.county === 'undefined') ? '' : ', '+item.properties.county;
+                option_tag[index] = '<option data-id="' + index + '" value="' + item.properties.name +countyValue  + ', ' + item.properties.country + '"></option>';
             });
             from_list.innerHTML = option_tag;
         });
@@ -360,8 +365,9 @@ to_input.addEventListener("input", function() {
             let option_tag = new Array();
             let parsed_json = (JSON.parse(api_response));
             parsed_json.features.forEach(function(item, index) {
-                option_tag[index] = '<option value="' + item.properties.name + ',' + item.properties.country + '">' + item.properties.name + ',' + item.properties.country + '</option>';
-            });
+                let countyValue=(typeof item.properties.county === 'undefined') ? '' : ', '+item.properties.county;
+                option_tag[index] = '<option data-id="' + index + '" value="' + item.properties.name +countyValue  + ', ' + item.properties.country + '"></option>';
+                       });
             to_list.innerHTML = option_tag;
         });
 })
@@ -450,3 +456,4 @@ get_direction.addEventListener("click", function(e) {
 
     });
 });
+
