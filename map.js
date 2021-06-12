@@ -64,14 +64,53 @@ var vectorLayer = new ol.layer.Vector({
             scale: 0.03,
             src: 'icon.png',
         }),
+        fill: new ol.style.Fill({
+            color: 'rgba(255,0,0,0.3)'
+        }),
         stroke: new ol.style.Stroke({
-            color: '#708090',
+            color: 'rgba(255,0,0,0.5)',
+            width: 2,
+
+        }),
+
+    }),
+});
+
+var iconStyle = new ol.style.Style({
+    image: new ol.style.Icon({
+        scale: 0.03,
+        src: 'icon.png',
+    }),
+});
+var iconFeature = new ol.Feature({
+    geometry: new ol.geom.Point([85.3240, 27.7172]),
+});
+
+iconFeature.setStyle(iconStyle);
+// vector layer for directuion
+var vectorSource_direction = new ol.source.Vector({
+    features: [iconFeature],
+});
+var vectorLayer_direction = new ol.layer.Vector({
+    source: vectorSource_direction,
+    name: 'Vector Layer',
+    style: new ol.style.Style({
+        image: new ol.style.Icon({
+            scale: 0.06,
+            src: 'icon.png',
+        }),
+        fill: new ol.style.Fill({
+            color: 'rgba(255,0,0,0.3)'
+        }),
+        stroke: new ol.style.Stroke({
+            color: 'rgba(60, 60, 60,0.5)',
             width: 6,
 
         }),
 
     }),
 });
+
 var vectorLayerforsearch = new ol.layer.Vector({
     zoom: 40,
     source: vectorSource,
@@ -189,22 +228,23 @@ function draw_snap_marker() {
 // });
 
 // isochrone ko logic
-$('#get_isochrones').click( function() {
-    
+$('#get_isochrones').click(function() {
+
     // Range ko value lios
-    let isochrone_range=$('#isochrone_range').val();
-    
+    let isochrone_range = $('#isochrone_range').val();
+
     // Khali cha ki chaina check garyo
-    if(isochrone_range==''){
+    if (isochrone_range == '') {
         alert('Enter isochrone range');
     }
     // Khali chaina bhaneys
-    else{
+    else {
         // bhaeko layer sabai hatayo
         map.removeLayer(vectorLayer);
         get_isochrones.disabled = true;
         draw_snap_marker();
-        let isochrones_api_url = "https://api.openrouteservice.org/v2/isochrones/driving-car", click = 0;
+        let isochrones_api_url = "https://api.openrouteservice.org/v2/isochrones/driving-car",
+            click = 0;
 
         //Map ma click bhayepachi agrney kaam
         map.on("click", isochrone_function = function(e) {
@@ -214,7 +254,7 @@ $('#get_isochrones').click( function() {
             request.setRequestHeader('Accept', 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8');
             request.setRequestHeader('Content-Type', 'application/json');
             request.setRequestHeader('Authorization', API_KEY);
-            
+
             request.onreadystatechange = function() {
                 if (this.readyState === 4) {
                     let isochrone_features = new ol.format.GeoJSON().readFeatures(this.responseText);
@@ -224,13 +264,13 @@ $('#get_isochrones').click( function() {
 
             let long = e.coordinate[0];
             let lat = e.coordinate[1];
-            const body = '{"locations":[[' + long + ',' + lat + ']],"range":['+isochrone_range+']}';
+            const body = '{"locations":[[' + long + ',' + lat + ']],"range":[' + isochrone_range + ']}';
             request.send(body);
             if (click > 0) {
-            map.un("click", isochrone_function);
-            map.removeInteraction(draw);
-            get_isochrones.disabled = false;
-        }
+                map.un("click", isochrone_function);
+                map.removeInteraction(draw);
+                get_isochrones.disabled = false;
+            }
         });
     }
 });
@@ -294,8 +334,10 @@ searchInput.addEventListener("input", function() {
             let parsed_json = JSON.parse(geojson);
             console.log(parsed_json.features);
             console.log(parsed_json.features.item);
-            parsed_json.features.forEach((item, index) =>
-                option_tag[index] = '<option data-id="' + index + '" value="' + item.properties.name + ', ' + item.properties.county + ', ' + item.properties.country + '"></option>');
+            parsed_json.features.forEach((item, index) => {
+                let countyValue = (typeof item.properties.county === 'undefined') ? '' : ', ' + item.properties.county;
+                option_tag[index] = '<option data-id="' + index + '" value="' + item.properties.name + countyValue + ', ' + item.properties.country + '"></option>';
+            });
             search_list.innerHTML = option_tag;
 
             searchInput.addEventListener("change", function(event) {
@@ -338,8 +380,8 @@ from_input.addEventListener("input", function() {
             let option_tag = new Array();
             let parsed_json = (JSON.parse(api_response));
             parsed_json.features.forEach((item, index) => {
-                let countyValue=(typeof item.properties.county === 'undefined') ? '' : ', '+item.properties.county;
-                option_tag[index] = '<option data-id="' + index + '" value="' + item.properties.name +countyValue  + ', ' + item.properties.country + '"></option>';
+                let countyValue = (typeof item.properties.county === 'undefined') ? '' : ', ' + item.properties.county;
+                option_tag[index] = '<option data-id="' + index + '" value="' + item.properties.name + countyValue + ', ' + item.properties.country + '"></option>';
             });
             from_list.innerHTML = option_tag;
         });
@@ -365,9 +407,9 @@ to_input.addEventListener("input", function() {
             let option_tag = new Array();
             let parsed_json = (JSON.parse(api_response));
             parsed_json.features.forEach(function(item, index) {
-                let countyValue=(typeof item.properties.county === 'undefined') ? '' : ', '+item.properties.county;
-                option_tag[index] = '<option data-id="' + index + '" value="' + item.properties.name +countyValue  + ', ' + item.properties.country + '"></option>';
-                       });
+                let countyValue = (typeof item.properties.county === 'undefined') ? '' : ', ' + item.properties.county;
+                option_tag[index] = '<option data-id="' + index + '" value="' + item.properties.name + countyValue + ', ' + item.properties.country + '"></option>';
+            });
             to_list.innerHTML = option_tag;
         });
 })
@@ -405,7 +447,7 @@ get_direction.addEventListener("click", function(e) {
 
             //from here
 
-            close_sidebar.click();
+
 
             starting_long = coordinate_from[0],
                 starting_lat = coordinate_from[1],
@@ -419,7 +461,7 @@ get_direction.addEventListener("click", function(e) {
             let starting_long_lat = String(starting_long).concat(",").concat(String(starting_lat));
             let ending_long_lat = String(ending_long).concat(",").concat(String(ending_lat));
             let final_url = direction_api_url.concat(starting_long_lat).concat("&end=").concat(ending_long_lat);
-            console.log(final_url);
+
 
             fetch(
                     final_url
@@ -430,12 +472,24 @@ get_direction.addEventListener("click", function(e) {
                 })
                 .then(function(text) {
                     let geojson = text;
-                    console.log(geojson);
+
 
                     return geojson;
 
                 })
                 .then(function(geojson) {
+
+                    let instructions_data = JSON.parse(geojson).features[0].properties.segments[0].steps;
+                    let div_design = "<h4>Instruction</h4></br>"
+                    instructions_data.forEach(function(instruction_detail) {
+                        let distance = instruction_detail.distance;
+                        let instruction = instruction_detail.instruction;
+                        let time = instruction_detail.duration;
+                        div_design += "Distance : " + distance + "</br>Time :" + time + "</br>Instruction : " + instruction + "</br><hr>";
+
+                    });
+                    console.log(instructions_data);
+                    document.getElementById("instruction_div").innerHTML = div_design;
                     let coordinates_count = JSON.parse(geojson).features[0].geometry.coordinates.length;
                     let middle_array = coordinates_count / 2;
                     let middle_array_roundoff = Math.floor(middle_array);
@@ -443,10 +497,11 @@ get_direction.addEventListener("click", function(e) {
                     // let center_coordinate = JSON.parse(geojson).features[0].geometry.coordinates[middle_array_roundoff];
                     // let distance = JSON.parse(geojson).features[0].properties.summary.distance;
                     // let duration = JSON.parse(geojson).features[0].properties.summary.duration;
-                    vectorSource.clear();
+                    vectorSource_direction.clear();
                     let direction_features = new ol.format.GeoJSON().readFeatures(geojson);
-                    vectorSource.addFeatures(direction_features);
-                    map.addLayer(vectorLayer);
+                    vectorSource_direction.addFeatures(direction_features);
+                    map.addLayer(vectorLayer_direction);
+
                     // add_distance_duration_overlay(center_coordinate, distance, duration);
 
                 });
@@ -456,4 +511,3 @@ get_direction.addEventListener("click", function(e) {
 
     });
 });
-

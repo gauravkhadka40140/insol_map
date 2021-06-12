@@ -34,7 +34,7 @@
             <ul role="tablist">
                 <li><a href="#layer_switcher" role="tab"><i class="fa fa-bars center_icon"></i></a></li>
                 <li><a href="#map_tools" role="tab"><i class="fa fa-briefcase center_icon" aria-hidden="true"></i></a></li>
-                <li><a href="#tools" role="tab"><i class="fa fa-dot-circle-o center_icon" aria-hidden="true"></i></a></li>
+                <li><a href="#direction" role="tab"><i class="fa fa-dot-circle-o center_icon" aria-hidden="true"></i></a></li>
             </ul>
 
             <!-- buttom ko euta menu -->
@@ -61,14 +61,7 @@
                     Options
                     <span id="close_sidebar" class="sidebar-close"><i class="fa fa-caret-left center_icon"></i></span>
                 </h1>
-                <label>From :</label><input id="from_input" list="from_list" type="text" class="input" placeholder="From Location">
-                <datalist id="from_list"></datalist>
-                <label>To : </label><input id="to_input" list="to_list" type="text" class="input" placeholder="To Location">
-                <datalist id="to_list"></datalist>
 
-                <!-- Button to get direction -->
-                <button class="button" id="get_direction">Get direction</button>
-                </br>
 
                 <!-- Input range for isochrones -->
                 <label>Input time (sec) : </label>
@@ -80,6 +73,24 @@
                 <!--For Salesman Problem-->
                 <button class="button" id="get_optimization">Optimization</button>
 
+            </div>
+            <div class="sidebar-pane " id="direction">
+                <h1 class="sidebar-header" style="margin-bottom:10px;">
+                    Direction
+                    <span id="close_sidebar" class="sidebar-close"><i class="fa fa-caret-left center_icon"></i></span>
+                </h1>
+                <label>From :</label><input id="from_input" list="from_list" type="text" class="input" placeholder="From Location">
+                <datalist id="from_list"></datalist>
+                <label>To : </label><input id="to_input" list="to_list" type="text" class="input" placeholder="To Location">
+                <datalist id="to_list"></datalist>
+
+                <!-- Button to get direction -->
+                <button class="button" id="get_direction">Get direction</button>
+                </br>
+                <div id="instruction_div">
+                    Instructions
+
+                </div>
             </div>
         </div>
 
