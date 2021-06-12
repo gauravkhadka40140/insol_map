@@ -488,7 +488,6 @@ get_direction.addEventListener("click", function(e) {
                         div_design += "Distance : " + distance + "</br>Time :" + time + "</br>Instruction : " + instruction + "</br><hr>";
 
                     });
-                    console.log(instructions_data);
                     document.getElementById("instruction_div").innerHTML = div_design;
                     let coordinates_count = JSON.parse(geojson).features[0].geometry.coordinates.length;
                     let middle_array = coordinates_count / 2;
